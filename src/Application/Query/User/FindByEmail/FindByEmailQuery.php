@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Query\User\FindByEmail;
 
 use App\Domain\User\ValueObject\Email;
+use App\Infrastructure\Share\Bus\QueryInterface;
 
-class FindByEmailQuery
+class FindByEmailQuery implements QueryInterface
 {
-    /**
-     * @var Email
-     */
+    /** @var Email */
     public $email;
 
     /**

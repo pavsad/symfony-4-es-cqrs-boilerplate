@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\UI\Http\Rest\Controller;
 
 use App\Application\Command\User\SignUp\SignUpCommand;
-use League\Tactician\CommandBus;
+use App\Infrastructure\Share\Bus\CommandBus;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 abstract class JsonApiTestCase extends WebTestCase
@@ -16,6 +16,18 @@ abstract class JsonApiTestCase extends WebTestCase
     public const DEFAULT_EMAIL = 'lol@lo.com';
 
     public const DEFAULT_PASS = '1234567890';
+
+    protected ?KernelBrowser $cli;
+
+    private ?string $token = null;
+
+    protected ?UuidInterface $userUuid;
+
+    protected function setUp(): void
+    {
+        self::ensureKernelShutdown();
+        $this->cli = static::createClient();
+    }
 
     /**
      * @throws \Assert\AssertionFailedException
@@ -32,28 +44,28 @@ abstract class JsonApiTestCase extends WebTestCase
         );
 
         /** @var CommandBus $commandBus */
-        $commandBus = $this->client->getContainer()->get('tactician.commandbus.command');
+        $commandBus = $this->cli->getContainer()->get(CommandBus::class);
 
         $commandBus->handle($signUp);
 
         return $email;
     }
 
-    protected function post(string $uri, array $params)
+    protected function post(string $uri, array $params): void
     {
-        $this->client->request(
+        $this->cli->request(
             'POST',
             $uri,
             [],
             [],
             $this->headers(),
-            json_encode($params)
+            (string) \json_encode($params)
         );
     }
 
-    protected function get(string $uri, array $parameters = [])
+    protected function get(string $uri, array $parameters = []): void
     {
-        $this->client->request(
+        $this->cli->request(
             'GET',
             $uri,
             $parameters,
@@ -69,7 +81,10 @@ abstract class JsonApiTestCase extends WebTestCase
             '_password' => $password ?: self::DEFAULT_PASS,
         ]);
 
-        $response = json_decode($this->client->getResponse()->getContent(), true);
+        /** @var string $content */
+        $content = $this->cli->getResponse()->getContent();
+
+        $response = \json_decode($content, true);
 
         $this->token = $response['token'];
     }
@@ -92,24 +107,10 @@ abstract class JsonApiTestCase extends WebTestCase
         return $headers;
     }
 
-    protected function setUp()
+    protected function tearDown(): void
     {
-        $this->client = static::createClient();
-    }
-
-    protected function tearDown()
-    {
-        $this->client = null;
+        $this->cli = null;
         $this->token = null;
         $this->userUuid = null;
     }
-
-    /** @var null|Client */
-    protected $client;
-
-    /** @var null|string */
-    private $token;
-
-    /** @var null|UuidInterface */
-    protected $userUuid;
 }

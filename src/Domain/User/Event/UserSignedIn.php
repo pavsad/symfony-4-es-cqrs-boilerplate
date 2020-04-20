@@ -12,16 +12,6 @@ use Ramsey\Uuid\UuidInterface;
 
 final class UserSignedIn implements Serializable
 {
-    public static function create(UuidInterface $uuid, Email $email): self
-    {
-        $instance = new self();
-
-        $instance->uuid = $uuid;
-        $instance->email = $email;
-
-        return $instance;
-    }
-
     /**
      * @throws \Assert\AssertionFailedException
      */
@@ -30,7 +20,7 @@ final class UserSignedIn implements Serializable
         Assertion::keyExists($data, 'uuid');
         Assertion::keyExists($data, 'email');
 
-        return self::create(
+        return new self(
             Uuid::fromString($data['uuid']),
             Email::fromString($data['email'])
         );
@@ -39,9 +29,15 @@ final class UserSignedIn implements Serializable
     public function serialize(): array
     {
         return [
-            'uuid'  => $this->uuid->toString(),
+            'uuid' => $this->uuid->toString(),
             'email' => $this->email->toString(),
         ];
+    }
+
+    public function __construct(UuidInterface $uuid, Email $email)
+    {
+        $this->uuid = $uuid;
+        $this->email = $email;
     }
 
     /** @var Email */

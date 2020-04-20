@@ -1,10 +1,10 @@
-FROM jorge07/alpine-php:7.2-dev-sf as builder
+ARG PHP_VERION=7.4.3
+FROM jorge07/alpine-php:${PHP_VERION}-dev as builder
 
 WORKDIR /app
 
 ENV APP_ENV prod
 ENV APP_SECRET default-secret
-ENV RABBITMQ_URL amqp://guest:guest@rmq:5672
 
 COPY composer.json /app
 COPY composer.lock /app
@@ -17,9 +17,9 @@ COPY config /app/config
 COPY src /app/src
 COPY public /app/public
 
-RUN composer run-script post-install-cmd && php /app/bin/console c:w
+RUN composer run-script post-install-cmd
 
-FROM jorge07/alpine-php:7.2 as php
+FROM jorge07/alpine-php:${PHP_VERION} as php
 
 ENV APP_ENV prod
 
@@ -27,7 +27,7 @@ WORKDIR /app
 
 COPY --from=builder /app /app
 
-FROM nginx:1.15-alpine as nginx
+FROM nginx:1.17-alpine as nginx
 
 ENV APP_ENV prod
 

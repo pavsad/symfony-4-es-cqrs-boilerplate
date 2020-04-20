@@ -17,6 +17,7 @@ class ProfileControllerTest extends WebTestCase
      */
     public function anon_user_should_be_redirected_to_sign_in(): void
     {
+        self::ensureKernelShutdown();
         $client = self::createClient();
 
         $client->request('GET', '/profile');
@@ -24,6 +25,6 @@ class ProfileControllerTest extends WebTestCase
         /** @var RedirectResponse $response */
         $response = $client->getResponse();
         $this->assertSame(Response::HTTP_FOUND, $response->getStatusCode());
-        $this->assertContains('/sign-in', $response->getTargetUrl());
+        $this->assertStringContainsString('/sign-in', $response->getTargetUrl());
     }
 }

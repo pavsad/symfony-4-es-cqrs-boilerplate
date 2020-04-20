@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace App\Infrastructure;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Component\Config\Exception\LoaderLoadException;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
@@ -42,7 +43,7 @@ class Kernel extends BaseKernel
         $container->setParameter('container.dumper.inline_class_loader', true);
         $confDir = $this->getProjectDir() . '/config';
         $loader->load($confDir . '/packages/*' . self::CONFIG_EXTS, 'glob');
-        if (is_dir($confDir . '/packages/' . $this->environment)) {
+        if (\is_dir($confDir . '/packages/' . $this->environment)) {
             $loader->load($confDir . '/packages/' . $this->environment . '/**/*' . self::CONFIG_EXTS, 'glob');
         }
         $loader->load($confDir . '/services' . self::CONFIG_EXTS, 'glob');
@@ -50,15 +51,15 @@ class Kernel extends BaseKernel
     }
 
     /**
-     * @throws \Symfony\Component\Config\Exception\FileLoaderLoadException
+     * @throws LoaderLoadException
      */
     protected function configureRoutes(RouteCollectionBuilder $routes): void
     {
         $confDir = $this->getProjectDir() . '/config';
-        if (is_dir($confDir . '/routes/')) {
+        if (\is_dir($confDir . '/routes/')) {
             $routes->import($confDir . '/routes/*' . self::CONFIG_EXTS, '/', 'glob');
         }
-        if (is_dir($confDir . '/routes/' . $this->environment)) {
+        if (\is_dir($confDir . '/routes/' . $this->environment)) {
             $routes->import($confDir . '/routes/' . $this->environment . '/**/*' . self::CONFIG_EXTS, '/', 'glob');
         }
         $routes->import($confDir . '/routes' . self::CONFIG_EXTS, '/', 'glob');

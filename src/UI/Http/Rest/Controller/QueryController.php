@@ -6,8 +6,9 @@ namespace App\UI\Http\Rest\Controller;
 
 use App\Application\Query\Collection;
 use App\Application\Query\Item;
+use App\Infrastructure\Share\Bus\QueryBus;
+use App\Infrastructure\Share\Bus\QueryInterface;
 use App\UI\Http\Rest\Response\JsonApiFormatter;
-use League\Tactician\CommandBus;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -15,7 +16,12 @@ abstract class QueryController
 {
     private const CACHE_MAX_AGE = 31536000; // Year.
 
-    protected function ask($query)
+    /**
+     * @return mixed
+     *
+     * @throws \Throwable
+     */
+    protected function ask(QueryInterface $query)
     {
         return $this->queryBus->handle($query);
     }
@@ -48,25 +54,19 @@ abstract class QueryController
         }
     }
 
-    public function __construct(CommandBus $queryBus, JsonApiFormatter $formatter, UrlGeneratorInterface $router)
+    public function __construct(QueryBus $queryBus, JsonApiFormatter $formatter, UrlGeneratorInterface $router)
     {
         $this->queryBus = $queryBus;
         $this->formatter = $formatter;
         $this->router = $router;
     }
 
-    /**
-     * @var JsonApiFormatter
-     */
+    /** @var JsonApiFormatter */
     private $formatter;
 
-    /**
-     * @var CommandBus
-     */
+    /** @var QueryBus */
     private $queryBus;
 
-    /**
-     * @var UrlGeneratorInterface
-     */
+    /** @var UrlGeneratorInterface */
     private $router;
 }

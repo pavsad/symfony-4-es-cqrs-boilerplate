@@ -62,11 +62,11 @@ final class SignInTest extends ApplicationTestCase
         return [
           [
               'email' => 'asd@asd.asd',
-              'pass'  => 'qwerqwer123',
+              'pass' => 'qwerqwer123',
           ],
           [
               'email' => 'asd@asd.com',
-              'pass'  => 'qwerqwer',
+              'pass' => 'qwerqwer',
           ],
         ];
     }
@@ -75,7 +75,7 @@ final class SignInTest extends ApplicationTestCase
      * @throws \Exception
      * @throws \Assert\AssertionFailedException
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

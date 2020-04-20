@@ -4,24 +4,25 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Share\Event\Publisher;
 
+use App\Infrastructure\Share\Bus\EventBus;
+use App\Infrastructure\Share\Event\Event;
 use Broadway\Domain\DomainMessage;
 use Broadway\EventHandling\EventListener;
-use OldSound\RabbitMqBundle\RabbitMq\ProducerInterface;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Throwable;
 
 final class AsyncEventPublisher implements EventPublisher, EventSubscriberInterface, EventListener
 {
-    public function publish(): void
-    {
-        if (empty($this->events)) {
-            return;
-        }
+    /** @var DomainMessage[] */
+    private array $events = [];
 
-        foreach ($this->events as $event) {
-            $this->eventProducer->publish(serialize($event), $event->getType());
-        }
+    private EventBus $bus;
+
+    public function __construct(EventBus $bus)
+    {
+        $this->bus = $bus;
     }
 
     public function handle(DomainMessage $message): void
@@ -32,21 +33,22 @@ final class AsyncEventPublisher implements EventPublisher, EventSubscriberInterf
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::TERMINATE  => 'publish',
+            KernelEvents::TERMINATE => 'publish',
             ConsoleEvents::TERMINATE => 'publish',
         ];
     }
 
-    public function __construct(ProducerInterface $eventProducer)
-    {
-        $this->eventProducer = $eventProducer;
-    }
-
     /**
-     * @var ProducerInterface
+     * @throws Throwable
      */
-    private $eventProducer;
+    public function publish(): void
+    {
+        if (empty($this->events)) {
+            return;
+        }
 
-    /** @var DomainMessage[] */
-    private $events = [];
+        foreach ($this->events as $event) {
+            $this->bus->handle(new Event($event));
+        }
+    }
 }

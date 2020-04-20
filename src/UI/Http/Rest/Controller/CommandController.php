@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\UI\Http\Rest\Controller;
 
-use League\Tactician\CommandBus;
+use App\Infrastructure\Share\Bus\CommandBus;
+use App\Infrastructure\Share\Bus\CommandInterface;
 
 abstract class CommandController
 {
-    protected function exec($command): void
+    /**
+     * @throws \Throwable
+     */
+    protected function exec(CommandInterface $command): void
     {
         $this->commandBus->handle($command);
     }
@@ -18,8 +22,6 @@ abstract class CommandController
         $this->commandBus = $commandBus;
     }
 
-    /**
-     * @var CommandBus
-     */
+    /** @var CommandBus */
     private $commandBus;
 }

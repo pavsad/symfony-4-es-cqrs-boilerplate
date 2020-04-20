@@ -34,6 +34,12 @@ abstract class ElasticRepository
         }
     }
 
+    public function reboot(): void
+    {
+        $this->delete();
+        $this->boot();
+    }
+
     public function boot(): void
     {
         if (!$this->client->indices()->exists(['index' => $this->index])) {
@@ -63,7 +69,7 @@ abstract class ElasticRepository
         $response = $this->client->search($query);
 
         return [
-            'data'  => array_column($response['hits']['hits'], '_source'),
+            'data' => \array_column($response['hits']['hits'], '_source'),
             'total' => $response['hits']['total'],
         ];
     }

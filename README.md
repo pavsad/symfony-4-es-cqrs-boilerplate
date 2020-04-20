@@ -1,26 +1,27 @@
-# Symfony 4 ES CQRS Boilerplate
+# Symfony 5 ES CQRS Boilerplate
 
 A boilerplate for DDD, CQRS, Event Sourcing applications using Symfony as framework and running with php7
 
-[![Build Status](https://travis-ci.org/jorge07/symfony-4-es-cqrs-boilerplate.svg?branch=master)](https://travis-ci.org/jorge07/symfony-4-es-cqrs-boilerplate)
-[![Coverage Status](https://coveralls.io/repos/github/jorge07/symfony-4-es-cqrs-boilerplate/badge.svg?branch=master)](https://coveralls.io/github/jorge07/symfony-4-es-cqrs-boilerplate?branch=coverage)
-[![StyleCI](https://github.styleci.io/repos/116064483/shield?branch=master)](https://github.styleci.io/repos/116064483)
+![pr](https://github.com/jorge07/symfony-5-es-cqrs-boilerplate/workflows/pr/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/jorge07/symfony-5-es-cqrs-boilerplate/badge.svg?branch=master)](https://coveralls.io/github/jorge07/symfony-5-es-cqrs-boilerplate?branch=coverage)
+
+Symfony 4 still available in [symfony-4 branch](https://github.com/jorge07/symfony-5-es-cqrs-boilerplate/tree/symfony-4)
 
 ## Documentation
 
-[Buses](https://github.com/jorge07/symfony-4-es-cqrs-boilerplate/tree/master/doc/GetStarted/Buses.md)
+[Buses](https://github.com/jorge07/symfony-5-es-cqrs-boilerplate/tree/master/doc/GetStarted/Buses.md)
 
-[Creating an Application Use Case](https://github.com/jorge07/symfony-4-es-cqrs-boilerplate/tree/master/doc/GetStarted/UseCases.md)
+[Creating an Application Use Case](https://github.com/jorge07/symfony-5-es-cqrs-boilerplate/tree/master/doc/GetStarted/UseCases.md)
 
-[Adding Projections](https://github.com/jorge07/symfony-4-es-cqrs-boilerplate/tree/master/doc/GetStarted/Projections.md)
+[Adding Projections](https://github.com/jorge07/symfony-5-es-cqrs-boilerplate/tree/master/doc/GetStarted/Projections.md)
 
-[Async executions](https://github.com/jorge07/symfony-4-es-cqrs-boilerplate/tree/master/doc/GetStarted/Async.md)
+[Async executions](https://github.com/jorge07/symfony-5-es-cqrs-boilerplate/tree/master/doc/GetStarted/Async.md)
 
-[UI workflow](https://github.com/jorge07/symfony-4-es-cqrs-boilerplate/blob/master/doc/Workflow.md)
+[UI workflow](https://github.com/jorge07/symfony-5-es-cqrs-boilerplate/blob/master/doc/Workflow.md)
 
-[Xdebug configuration](https://github.com/jorge07/symfony-4-es-cqrs-boilerplate/blob/master/doc/GetStarted/Xdebug.md)
+[Xdebug configuration](https://github.com/jorge07/symfony-5-es-cqrs-boilerplate/blob/master/doc/GetStarted/Xdebug.md)
 
-[Kubernetes Deployment](https://github.com/jorge07/symfony-4-es-cqrs-boilerplate/blob/master/doc/Deployment.md)
+[Kubernetes Deployment](https://github.com/jorge07/symfony-5-es-cqrs-boilerplate/blob/master/doc/Deployment.md)
 
 ## Architecture
 
@@ -29,7 +30,7 @@ A boilerplate for DDD, CQRS, Event Sourcing applications using Symfony as framew
 ## Implementations
 
 - [x] Environment in Docker
-- [x] Command Bus, Query Bus, Event Bus
+- [x] Symfony Messenger
 - [x] Event Store
 - [x] Read Model
 - [x] Async Event subscribers
@@ -50,9 +51,9 @@ A boilerplate for DDD, CQRS, Event Sourcing applications using Symfony as framew
 
 ## Stack
 
-- PHP 7.2
-- Mysql 5.7
-- Elastic & Kibana 6.3
+- PHP 7.4
+- Mysql 8.0
+- Elastic & Kibana 6.6
 - RabbitMQ 3
 
 ## Project Setup

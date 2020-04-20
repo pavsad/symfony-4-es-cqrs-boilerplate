@@ -12,7 +12,7 @@ use Broadway\EventSourcing\EventSourcingRepository;
 use Broadway\EventStore\EventStore;
 use Ramsey\Uuid\UuidInterface;
 
-class UserStore extends EventSourcingRepository implements UserRepositoryInterface
+final class UserStore extends EventSourcingRepository implements UserRepositoryInterface
 {
     public function store(User $user): void
     {
@@ -22,7 +22,7 @@ class UserStore extends EventSourcingRepository implements UserRepositoryInterfa
     public function get(UuidInterface $uuid): User
     {
         /** @var User $user */
-        $user = $this->load((string) $uuid);
+        $user = $this->load($uuid->toString());
 
         return $user;
     }

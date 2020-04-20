@@ -4,26 +4,53 @@ declare(strict_types=1);
 
 namespace App\Tests\Application;
 
-use League\Tactician\CommandBus;
+use App\Infrastructure\Share\Bus\CommandBus;
+use App\Infrastructure\Share\Bus\CommandInterface;
+use App\Infrastructure\Share\Bus\QueryBus;
+use App\Infrastructure\Share\Bus\QueryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\PostResponseEvent;
+use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Throwable;
 
 abstract class ApplicationTestCase extends KernelTestCase
 {
-    protected function ask($query)
+    private ?CommandBus $commandBus;
+
+    private ?QueryBus $queryBus;
+
+    protected function setUp(): void
+    {
+        self::bootKernel();
+
+        $this->commandBus = $this->service(CommandBus::class);
+        $this->queryBus = $this->service(QueryBus::class);
+    }
+
+    /**
+     * @return mixed
+     *
+     * @throws Throwable
+     */
+    protected function ask(QueryInterface $query)
     {
         return $this->queryBus->handle($query);
     }
 
-    protected function handle($command): void
+    /**
+     * @throws Throwable
+     */
+    protected function handle(CommandInterface $command): void
     {
         $this->commandBus->handle($command);
     }
 
+    /**
+     * @return object|null
+     */
     protected function service(string $serviceId)
     {
         return self::$container->get($serviceId);
@@ -31,37 +58,22 @@ abstract class ApplicationTestCase extends KernelTestCase
 
     protected function fireTerminateEvent(): void
     {
-        /** @var EventDispatcherInterface $dispatcher */
+        /** @var EventDispatcher $dispatcher */
         $dispatcher = $this->service('event_dispatcher');
 
         $dispatcher->dispatch(
-            KernelEvents::TERMINATE,
-            new PostResponseEvent(
+            new TerminateEvent(
                 static::$kernel,
                 Request::create('/'),
                 Response::create()
-            )
+            ),
+            KernelEvents::TERMINATE
         );
     }
 
-    protected function setUp()
-    {
-        static::bootKernel();
-
-        $this->commandBus = $this->service('tactician.commandbus.command');
-
-        $this->queryBus = $this->service('tactician.commandbus.query');
-    }
-
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->commandBus = null;
         $this->queryBus = null;
     }
-
-    /** @var CommandBus|null */
-    private $commandBus;
-
-    /** @var CommandBus|null */
-    private $queryBus;
 }

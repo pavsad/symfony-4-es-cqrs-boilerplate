@@ -7,10 +7,14 @@ namespace App\Infrastructure\Share\Query\Repository;
 use App\Domain\Shared\Query\Exception\NotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 
 abstract class MysqlRepository
 {
+    /**
+     * @param object $model
+     */
     public function register($model): void
     {
         $this->entityManager->persist($model);
@@ -23,8 +27,10 @@ abstract class MysqlRepository
     }
 
     /**
+     * @return mixed
+     *
      * @throws NotFoundException
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     protected function oneOrException(QueryBuilder $queryBuilder)
     {
@@ -59,8 +65,6 @@ abstract class MysqlRepository
     /** @var EntityRepository */
     protected $repository;
 
-    /**
-     * @var EntityManagerInterface
-     */
+    /** @var EntityManagerInterface */
     private $entityManager;
 }
